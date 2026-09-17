@@ -5,10 +5,10 @@ pre-commit:
   commands:
     lint:
       glob: "*.{js,ts,jsx,tsx}"
-      run: pnpm exec vp lint {staged_files}
+      run: pnpm exec oxlint -c oxlint.config.ts {staged_files}
     format:
       glob: "*.{js,ts,jsx,tsx,json,css,yml,yaml}"
-      run: pnpm exec vp fmt --check {staged_files}
+      run: pnpm exec oxfmt --check {staged_files}
 pre-push:
   commands:
     check:

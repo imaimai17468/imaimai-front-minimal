@@ -8,7 +8,7 @@ export class ApiError extends Error {
   }
 }
 
-const baseUrl = import.meta.env.VITE_API_BASE_URL;
+const baseUrl = process.env.NEXT_PUBLIC_API_BASE_URL;
 
 /**
  * The single place a request leaves this app. It returns `unknown`, so the

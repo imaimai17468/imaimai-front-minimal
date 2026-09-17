@@ -18,18 +18,32 @@
     "resolveJsonModule": true,
     "isolatedModules": true,
     "allowImportingTsExtensions": true,
-    "types": ["node"],
     "jsx": "react-jsx",
+    "plugins": [
+      {
+        "name": "next"
+      }
+    ],
     "paths": {
       "@/*": ["./src/*"]
-    }
+    },
+    "allowJs": true,
+    "incremental": true,
+    "esModuleInterop": true
   },
   "include": [
     "src/**/*.ts",
     "src/**/*.tsx",
-    "vite.config.ts",
+    "app/**/*.ts",
+    "app/**/*.tsx",
+    "next.config.ts",
+    "vitest.config.ts",
+    "oxlint.config.ts",
+    "oxfmt.config.ts",
     "oxlint.react-doctor.ts",
-    "doctor.config.ts"
+    "doctor.config.ts",
+    ".next/types/**/*.ts",
+    ".next/dev/types/**/*.ts"
   ],
   "exclude": ["node_modules", "dist"]
 }

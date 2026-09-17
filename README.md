@@ -52,8 +52,6 @@ Node は `.node-version`、pnpm は `package.json` の `packageManager` で固�
 | `.cursor/rules/*.mdc` | 上記 4 本へのシンボリックリンク。Cursor から同じ規約が読まれる |
 | `.claude/agents/code-reviewer.md` | コミット前レビュー。未コミットの diff を読み、検出 → 重複排除 → 反証 → 報告の 4 段で回す |
 | `.claude/skills/ticket-work/` | チケット単位の作業手順 7 ステップ |
-| `.claude/skills/launch-checklist/` | 公開前チェックリスト（セキュリティ、SEO、OGP、パフォーマンス、a11y） |
-| `.claude/skills/motion-craft/` | アニメーションとモーションの設計基準 |
 | `.claude/skills/empirical-prompt-tuning/` | プロンプトやスキルを実測で改善する手順 |
 | `.claude/settings.json` | 読み取り系と `pnpm` script の許可リストのみ。フックは設定していない |
 

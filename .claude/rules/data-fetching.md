@@ -11,9 +11,9 @@ AGENTS.md settles which directory owns a module: a page's slice sits in a `-`-pr
 
 ## Where a request leaves the app
 
-`src/lib/api-client.ts` holds the only `fetch` call in `src/`. It prefixes `import.meta.env.VITE_API_BASE_URL`, sets the JSON content type, throws `ApiError` carrying the status where the response is not ok, and returns `unknown`. A caller that reaches `fetch` itself loses all four, and the `unknown` is what forces the decode below.
+`src/lib/api-client.ts` holds the only `fetch` call in `src/`. It prefixes `process.env.NEXT_PUBLIC_API_BASE_URL`, sets the JSON content type, throws `ApiError` carrying the status where the response is not ok, and returns `unknown`. A caller that reaches `fetch` itself loses all four, and the `unknown` is what forces the decode below.
 
-This app ships to the browser whole, so every `VITE_`-prefixed value is readable in the built bundle. A token, a key, or a secret never goes in one.
+This app ships to the browser whole, so every `NEXT_PUBLIC_` value is readable in the built bundle. A token, a key, or a secret never goes in one.
 
 ## Slice shape
 
@@ -59,7 +59,7 @@ This app ships to the browser whole, so every `VITE_`-prefixed value is readable
 - **A handler and the schema it satisfies change in the same commit.** A handler that returns a shape the real API never sends makes the whole suite green against a fiction.
 - **The handler validates the request body with the same schema the form uses**, so a field the form lets through and the API would reject fails here instead of in production.
 - `src/mocks/db.ts` holds the rows between requests, and `src/test-setup.ts` resets them and the handler overrides after each test. A test that needs a different answer calls `server.use(...)` and leaves the reset to the teardown.
-- `VITE_API_MOCK=off` in `.env.local` points `pnpm dev` at the real base URL instead. Nothing under `src/mocks/` reaches the production bundle, because `src/main.tsx` imports it inside an `import.meta.env.DEV` branch.
+- Nothing under `src/mocks/` reaches the production bundle. `app/providers.tsx` dynamically imports the browser worker inside `process.env.NODE_ENV === "development"`, which Next.js dead-code-eliminates in production builds, and `src/test-setup.ts` starts the Node server for tests.
 
 ## Checklist
 

@@ -1,14 +1,14 @@
 "use client";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation } from "@tanstack/react-query";
+import { useRouter } from "next/navigation";
 import { type SubmitEvent, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { type NoteDraft, noteDraftSchema } from "./note";
-import { notesQueryOptions } from "./read";
 import { createNote } from "./write";
 
 export const NoteForm = () => {
-  const queryClient = useQueryClient();
+  const router = useRouter();
   const {
     register,
     handleSubmit,
@@ -21,9 +21,9 @@ export const NoteForm = () => {
 
   const { mutate, isPending, isError } = useMutation({
     mutationFn: createNote,
-    onSuccess: async () => {
+    onSuccess: () => {
       reset();
-      await queryClient.invalidateQueries(notesQueryOptions());
+      router.refresh();
     },
   });
 

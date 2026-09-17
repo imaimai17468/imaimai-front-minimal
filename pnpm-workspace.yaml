@@ -2,6 +2,11 @@
 # `vite` or `vitest` on its own resolves a second copy, and the two disagree on
 # `instanceof` checks and on Vitest's mock and expect state. Both values follow
 # the installed `vite-plus` version: read them with `pnpm exec vp --version`.
+#
+# These two lines are not enough on their own. `package.json` also carries
+# `vite` as a devDependency with the same alias, because pnpm resolved the
+# plugins' peer `vite` to a plain 8.3.0 while only these overrides were set.
+# All three move together.
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vitest: 4.1.11

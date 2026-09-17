@@ -1,8 +1,8 @@
 ---
-description: Purity and the calling rules from the Rules of React, then effects, component splitting, testable shape, and module organization
-globs: src/**/*.ts,src/**/*.tsx
+description: Purity and the calling rules from the Rules of React, then effects, Server and Client Components, component splitting, testable shape, and module organization
+globs: src/**/*.ts,src/**/*.tsx,app/**/*.ts,app/**/*.tsx
 alwaysApply: false
-paths: src/**/*.ts, src/**/*.tsx
+paths: src/**/*.ts, src/**/*.tsx, app/**/*.ts, app/**/*.tsx
 ---
 
 # React Purity
@@ -58,6 +58,15 @@ React 19 introduced a unified model for user-initiated async work. An **Action**
 - **`use(promise)` reads a cached Promise during render**: the component suspends until the Promise resolves. The Promise must be stable across re-renders — created outside the component or memoized — never inline inside render. An unstable Promise causes repeated Suspense flickers.
 - **`use()` may be called conditionally**: unlike hooks, it is not subject to the Rules of Hooks and may appear inside `if` statements and loops. Wrap the component in `<Suspense>` for the pending state and in an Error Boundary for rejection; do not catch rejections with try/catch inside the component.
 - **`useDeferredValue` declares where consistency can be relaxed, not how to debounce**: pass the value you can show stale, and React defers its update when higher-priority work is in flight. Reach for it before writing a manual timer; the component that reads the deferred value re-renders independently of the component that wrote the original, so split them to minimize re-render scope.
+
+# Server and Client Components
+
+Default to Server Components. Add `'use client'` when the component needs state, event handlers, lifecycle effects, browser-only APIs (`localStorage`, `window`, `navigator`), or custom hooks that use any of these. A component with none of those stays a Server Component.
+
+- **Keep the `'use client'` boundary at the leaf**: mark the smallest component that needs client features, not its ancestor layout or provider. Every module a `'use client'` file imports enters the client bundle; a layout or provider carrying the directive pulls in everything it imports.
+- **Pass Server Components as `children` to Client Components**: a `children` prop does not enter the importing module's graph. The parent Server Component renders the child on the server and passes the result through the RSC payload, so a stateful wrapper such as a modal or a theme provider can contain server-rendered content without shipping that content to the client.
+- **A Client Component never imports a Server Component directly**: that import moves the Server Component into the client bundle. Pass it as `children` or another prop from a Server Component ancestor instead.
+- **Data fetching belongs to Server Components or TanStack Query, not `useEffect`**: `data-fetching.md` settles which pattern each case calls for.
 
 # Component Splitting
 

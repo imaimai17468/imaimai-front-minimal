@@ -18,7 +18,9 @@
       "Bash(git branch *)",
       "Bash(gh pr view *)",
       "Bash(gh pr list *)",
-      "Bash(gh pr checks *)"
+      "Bash(gh pr checks *)",
+      "WebSearch",
+      "WebFetch"
     ]
   }
 }

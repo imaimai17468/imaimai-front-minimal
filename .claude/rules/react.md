@@ -42,6 +42,23 @@ Corollaries of "You Might Not Need an Effect" for things that genuinely live out
 - **Latest-ref for callbacks that outlive renders**: A subscription that must run "the current logic" calls `latestRef.current()`, and the sync effect updates the ref each render. This avoids re-subscribing per render and stale closures.
 - **The last effect standing must read as a sentence**: After the above, every remaining `useEffect` should read as "synchronize [external system] with [rendered value]" (e.g. paint the canvas from the computed layout). An effect that doesn't fit that sentence has a better home.
 
+# Async React
+
+React 19 introduced a unified model for user-initiated async work. An **Action** is any async function passed to `startTransition`: React executes it immediately but marks the resulting state updates as non-urgent so the UI stays responsive. `isPending` from `useTransition` is the only signal the rest of the UI needs.
+
+- **`startTransition` wraps user-initiated async work**: pass an `async` function directly. `isPending` stays `true` until every `await` in that function settles and the final state is painted.
+- **State updates after `await` lose transition context**: wrap post-`await` state setters in a nested `startTransition`, or they render as urgent updates outside the transition.
+- **`useActionState` for async work that produces new state**: `const [state, dispatch, isPending] = useActionState(asyncReducer, initialState)`. The `asyncReducer` is `async`, receives `(previousState, actionPayload)`, and may perform side effects. Prefer it over `useState` + `useEffect` for any user-initiated fetch or mutation that returns state.
+- **Dispatches queue automatically in `useActionState`**: each `dispatch` waits for the previous reducer call to finish before starting. Sequential ordering is guaranteed without manual abort logic or debouncing.
+- **Don't disable buttons during `isPending` in `useActionState`**: queuing absorbs rapid dispatches and produces better UX than a disabled control that discards intent.
+- **Call `dispatch` inside `startTransition`, or via `<form action>`**: passing `dispatch` as `action` on a `<form>` element wraps it automatically. Calling `dispatch` outside a transition skips the pending flag.
+- **Known errors return as state; unknown errors throw**: validation failures and expected API errors belong in the returned state object. Network failures and unexpected throws propagate to the nearest Error Boundary.
+- **`useOptimistic` for immediate feedback during an Action**: `const [optimisticValue, applyOptimistic] = useOptimistic(actualValue, reducer)`. Call `applyOptimistic` inside the same `startTransition` as the async work — never outside a transition. Use the reducer form `(current, action) => next` whenever `actualValue` can change mid-flight; React re-runs the reducer against the latest base, preventing stale-base bugs. The optimistic value reverts to `actualValue` automatically when the Action completes or throws.
+- **Combine `useActionState` + `useOptimistic` for the full pattern**: `dispatch` (from `useActionState`) drives the actual state; `applyOptimistic` drives the displayed state. Both accept the same action shape, so the sync reducer and the async reducer stay parallel.
+- **`use(promise)` reads a cached Promise during render**: the component suspends until the Promise resolves. The Promise must be stable across re-renders — created outside the component or memoized — never inline inside render. An unstable Promise causes repeated Suspense flickers.
+- **`use()` may be called conditionally**: unlike hooks, it is not subject to the Rules of Hooks and may appear inside `if` statements and loops. Wrap the component in `<Suspense>` for the pending state and in an Error Boundary for rejection; do not catch rejections with try/catch inside the component.
+- **`useDeferredValue` declares where consistency can be relaxed, not how to debounce**: pass the value you can show stale, and React defers its update when higher-priority work is in flight. Reach for it before writing a manual timer; the component that reads the deferred value re-renders independently of the component that wrote the original, so split them to minimize re-render scope.
+
 # Component Splitting
 
 - **Re-render boundaries**: A component boundary is also a re-render boundary. When parts of a UI update at different frequencies, split them into separate components so expensive subtrees don't re-render unnecessarily. When a library offers both a hook API and a render-props/component API, prefer the one that isolates re-renders to the smallest scope.

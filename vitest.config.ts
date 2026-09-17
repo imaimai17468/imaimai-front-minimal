@@ -7,6 +7,7 @@ export default defineConfig({
   resolve: {
     alias: {
       "@": path.resolve(import.meta.dirname, "./src"),
+      "@app": path.resolve(import.meta.dirname, "./app"),
     },
   },
   test: {
@@ -17,12 +18,13 @@ export default defineConfig({
       NEXT_PUBLIC_API_BASE_URL: "/api",
     },
     coverage: {
-      include: ["src/**/*.ts"],
+      include: ["src/**/*.ts", "app/**/*.ts"],
       exclude: [
         "src/**/*.tsx",
         "src/mocks/**",
         "src/test/**",
         "src/test-setup.ts",
+        "app/**/*.tsx",
       ],
       thresholds: {
         perFile: true,

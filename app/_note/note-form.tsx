@@ -4,8 +4,8 @@ import { useMutation } from "@tanstack/react-query";
 import { useRouter } from "next/navigation";
 import { type SubmitEvent, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { type NoteDraft, noteDraftSchema } from "./note";
-import { createNote } from "./write";
+import { type NoteDraft, noteDraftSchema } from "./api/note";
+import { createNote } from "./api/write";
 
 export const NoteForm = () => {
   const router = useRouter();

@@ -71,7 +71,7 @@ export default defineConfig({
   },
   overrides: [
     {
-      files: ["src/**/*.tsx"],
+      files: ["src/**/*.tsx", "app/**/*.tsx"],
       rules: { "max-lines-per-function": "off" },
     },
     {

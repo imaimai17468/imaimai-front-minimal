@@ -1,5 +1,5 @@
 import { formatDate } from "@/lib/format-date";
-import { fetchNotes } from "./read";
+import { fetchNotes } from "./api/read";
 
 export const NoteList = async () => {
   const notes = await fetchNotes(null);

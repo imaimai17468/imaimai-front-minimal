@@ -1,10 +1,8 @@
-"use client";
-import { useSuspenseQuery } from "@tanstack/react-query";
 import { formatDate } from "@/lib/format-date";
-import { notesQueryOptions } from "./read";
+import { fetchNotes } from "./read";
 
-export const NoteList = () => {
-  const { data: notes } = useSuspenseQuery(notesQueryOptions());
+export const NoteList = async () => {
+  const notes = await fetchNotes(null);
 
   if (notes.length === 0) {
     return (

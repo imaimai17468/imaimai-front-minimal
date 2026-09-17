@@ -2,8 +2,8 @@ import { setupWorker } from "msw/browser";
 import { handlers } from "./handlers";
 
 /**
- * `src/main.tsx` awaits this inside its `import.meta.env.DEV` branch, so the
- * production build drops both the call and this module.
+ * Called from `app/providers.tsx` only when `process.env.NODE_ENV === "development"`;
+ * Next.js dead-code-eliminates the dynamic import in production builds.
  */
 export const startMockWorker = async (): Promise<void> => {
   const worker = setupWorker(...handlers);

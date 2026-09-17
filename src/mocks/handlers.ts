@@ -2,7 +2,7 @@ import { HttpResponse, http } from "msw";
 import { noteDraftSchema } from "@/routes/-note/note";
 import { addNote, listNotes } from "./db";
 
-const notesUrl = `${import.meta.env.VITE_API_BASE_URL}/notes`;
+const notesUrl = `${process.env.NEXT_PUBLIC_API_BASE_URL}/notes`;
 
 export const handlers = [
   http.get(notesUrl, () => HttpResponse.json(listNotes())),

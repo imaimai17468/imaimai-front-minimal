@@ -1,3 +1,4 @@
+"use client";
 import { useSuspenseQuery } from "@tanstack/react-query";
 import { formatDate } from "@/lib/format-date";
 import { notesQueryOptions } from "./read";

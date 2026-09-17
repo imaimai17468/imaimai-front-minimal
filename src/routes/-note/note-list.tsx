@@ -1,6 +1,6 @@
 import { useSuspenseQuery } from "@tanstack/react-query";
-import { notesQueryOptions } from "@/gateways/note/read";
 import { formatDate } from "@/lib/format-date";
+import { notesQueryOptions } from "./read";
 
 export const NoteList = () => {
   const { data: notes } = useSuspenseQuery(notesQueryOptions());

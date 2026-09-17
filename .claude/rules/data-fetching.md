@@ -7,7 +7,7 @@ paths: src/**/*.ts, src/**/*.tsx
 
 # Data Fetching
 
-AGENTS.md settles the layer order, `routes/` → `gateways/` → `entities/`. This file settles what one read or one write looks like inside it.
+AGENTS.md settles which directory owns a module: a page's slice sits in a `-`-prefixed directory beside its route file. This file settles what one read or one write looks like inside that slice.
 
 ## Where a request leaves the app
 
@@ -15,22 +15,25 @@ AGENTS.md settles the layer order, `routes/` → `gateways/` → `entities/`. Th
 
 This app ships to the browser whole, so every `VITE_`-prefixed value is readable in the built bundle. A token, a key, or a secret never goes in one.
 
-## Gateway shape
+## Slice shape
 
-- **A directory under `src/gateways/` is split by operation, not by layer.** `read.ts` holds the fetch and the `queryOptions` that address it; `write.ts` holds the function a mutation calls. A module both sides route through reads as depth without adding a decision, which is what `react.md`'s *No pass-through layers* refuses.
-- **`index.ts` holds only what both operations use**, such as the path they share. A second resource brings its own directory.
+`src/routes/-note/` is the shape, and a slice holds one resource:
+
+- **The gateway is split by operation, not by layer.** `read.ts` holds the fetch and the `queryOptions` that address it; `write.ts` holds the function a mutation calls. A module both sides route through reads as depth without adding a decision, which is what `react.md`'s *No pass-through layers* refuses.
+- **A file holds what both operations use**, as `endpoint.ts` holds the path they share. A second resource brings its own slice.
 - **A sub-directory carries an operation whose steps outgrow its file**, such as an upload that asks for a URL, puts the file, then writes the row.
+- **The components that render the resource live in the same directory.** Where two pages render one of them, AGENTS.md decides which directory it moves to.
 
 ## Decoding
 
 - **A schema decodes the response, and nothing else does.** `noteListSchema.parse(await apiFetch(...))` is the whole boundary: a response that does not match the schema throws in the gateway, where the failure names the field, instead of surfacing three components later as `undefined`.
-- `src/entities/` owns the schema for a value the app passes around, and the schema for a request body the form fills lives there too, so the form and the mock handler validate against the same object.
+- **The slice's schema file owns every shape the resource crosses the wire as**, as `note.ts` owns both the row and the draft a form submits, so the form and the mock handler validate against the same object.
 - Never hand-write a mapping from response fields to a type. A hand-written one compiles while the API drifts.
 
 ## Query options
 
-- One `queryOptions` factory per read, in the `read.ts` beside the function it calls. Name it `<subject>QueryOptions`. `query/prefer-query-options` reports a `queryKey` and `queryFn` written inline at a call site.
-- The key is the gateway directory and the operation as kebab-case segments, one segment per level, with the request object last where the read takes one: `["note", "list"]`. Partial-key `invalidateQueries` is the point of the hierarchy, and a spelling nobody can predict makes it a silent no-op.
+- One `queryOptions` factory per read, in the slice's `read.ts` beside the function it calls. Name it `<subject>QueryOptions`. `query/prefer-query-options` reports a `queryKey` and `queryFn` written inline at a call site.
+- The key is the resource and the operation as kebab-case segments, one segment per level, with the request object last where the read takes one: `["note", "list"]`. The slice's directory name is its first segment, so the key and the file path stay readable from each other. Partial-key `invalidateQueries` is the point of the hierarchy, and a spelling nobody can predict makes it a silent no-op.
 - `queryFn` passes the context's `signal` to the gateway function, so a cancelled query cancels the request rather than leaving it running.
 - The factory is the whole export. No `useNotes` wrapper hook, because the call site picks between `useSuspenseQuery`, `useQuery` and a loader, and a wrapper picks for it.
 
@@ -51,7 +54,7 @@ This app ships to the browser whole, so every `VITE_`-prefixed value is readable
 
 ## The API this app talks to
 
-`src/mocks/handlers.ts` answers every request in `pnpm dev` and in every test, so it is the API contract as this repository holds it.
+`src/mocks/handlers.ts` answers every request in `pnpm dev` and in every test, so it is the API contract as this repository holds it. It stays outside the slices, because one file showing every endpoint is what makes the contract readable, and it imports each slice's schema rather than restating a shape.
 
 - **A handler and the schema it satisfies change in the same commit.** A handler that returns a shape the real API never sends makes the whole suite green against a fiction.
 - **The handler validates the request body with the same schema the form uses**, so a field the form lets through and the API would reject fails here instead of in production.
@@ -61,8 +64,9 @@ This app ships to the browser whole, so every `VITE_`-prefixed value is readable
 ## Checklist
 
 - [ ] The request goes through `apiFetch`, and the response is decoded by a schema
-- [ ] `queryOptions` factory in the gateway's `read.ts`, named `<subject>QueryOptions`
-- [ ] Key segments are kebab-case, one per directory level
+- [ ] Schema, gateway and components sit in the page's slice directory
+- [ ] `queryOptions` factory in the slice's `read.ts`, named `<subject>QueryOptions`
+- [ ] Key segments are kebab-case, one per level
 - [ ] Loader uses `queryClient.query`, component uses `useSuspenseQuery`
 - [ ] Write is `useMutation`, and `onSuccess` invalidates by passing the factory
 - [ ] The mock handler answers the shape the schema decodes

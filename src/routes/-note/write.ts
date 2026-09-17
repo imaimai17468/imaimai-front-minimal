@@ -1,6 +1,6 @@
-import { type Note, type NoteDraft, noteSchema } from "@/entities/note";
 import { apiFetch } from "@/lib/api-client";
-import { NOTES_PATH } from "./index";
+import { NOTES_PATH } from "./endpoint";
+import { type Note, type NoteDraft, noteSchema } from "./note";
 
 export const createNote = async (draft: NoteDraft): Promise<Note> =>
   noteSchema.parse(

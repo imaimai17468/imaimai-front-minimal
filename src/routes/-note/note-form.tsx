@@ -2,9 +2,9 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { type SubmitEvent, useCallback } from "react";
 import { useForm } from "react-hook-form";
-import { type NoteDraft, noteDraftSchema } from "@/entities/note";
-import { notesQueryOptions } from "@/gateways/note/read";
-import { createNote } from "@/gateways/note/write";
+import { type NoteDraft, noteDraftSchema } from "./note";
+import { notesQueryOptions } from "./read";
+import { createNote } from "./write";
 
 export const NoteForm = () => {
   const queryClient = useQueryClient();

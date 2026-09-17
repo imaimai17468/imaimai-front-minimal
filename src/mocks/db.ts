@@ -1,4 +1,4 @@
-import type { Note, NoteDraft } from "@/entities/note";
+import type { Note, NoteDraft } from "@/routes/-note/note";
 
 const seed = (): Note[] => [
   {

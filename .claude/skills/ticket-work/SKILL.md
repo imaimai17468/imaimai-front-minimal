@@ -17,7 +17,7 @@ A premise you cannot check is a question, not a fact. Open the file, run the com
 
 ## 2. Locate
 
-Read the layer the change belongs to before adding to it. `AGENTS.md` names the layer order; `.claude/rules/data-fetching.md` settles a read or a write; `.claude/rules/react.md` settles where a module and a non-component value live.
+Read the slice the change belongs to before adding to it. `AGENTS.md` settles which directory owns a module and which way its imports run; `.claude/rules/data-fetching.md` settles a read or a write; `.claude/rules/react.md` settles where a module and a non-component value live.
 
 A change that adds a directory, a dependency, or a boundary is a decision to state in the report, not a detail.
 

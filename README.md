@@ -25,7 +25,8 @@
 ## クイックスタート
 
 ```bash
-pnpm install     # 依存と lefthook のインストール
+pnpm install              # 依存のインストール（ignore-scripts により audit も自動実行）
+pnpm exec lefthook install  # git フックを登録（ignore-scripts のため手動で一度だけ実行）
 pnpm dev         # http://localhost:5173 で MSW 経由のモック API と一緒に起動
 pnpm check       # フォーマット、Lint、型チェック
 pnpm test        # Vitest（カバレッジのブランチゲート込み）

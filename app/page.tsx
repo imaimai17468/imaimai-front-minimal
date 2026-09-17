@@ -1,4 +1,6 @@
 import { Suspense } from "react";
+
+export const dynamic = "force-dynamic";
 import { NoteForm } from "@/routes/-note/note-form";
 import { NoteList } from "@/routes/-note/note-list";
 

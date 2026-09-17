@@ -1,0 +1,7 @@
+# Vite+ bundles its own Vite, Vitest, Oxlint and Oxfmt. A plugin that imports
+# `vite` or `vitest` on its own resolves a second copy, and the two disagree on
+# `instanceof` checks and on Vitest's mock and expect state. Both values follow
+# the installed `vite-plus` version: read them with `pnpm exec vp --version`.
+overrides:
+  vite: npm:@voidzero-dev/vite-plus-core@0.3.2
+  vitest: 4.1.11

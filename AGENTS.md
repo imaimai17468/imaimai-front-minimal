@@ -88,7 +88,7 @@ Rules are auto-loaded from `.claude/rules/`, and each is mirrored into `.cursor/
 - **`data-fetching.md`** is scoped to `src/**/*.ts`, `src/**/*.tsx`, `app/**/*.ts`, and `app/**/*.tsx` and settles one read or write end to end: the single `fetch` call, the gateway directory's shape, where a response is decoded, what a Server Component and a Client Component each call, how a write triggers a refresh or invalidation, and what the mock handlers owe the real API.
 - **`design.md`** is scoped to `src/**/*.css` and `src/**/*.tsx`, so a session deciding a UI question without opening one of those files loads none of it and has to open the rule itself.
 - **`prose.md`** carries no path scope, so every session holds it whatever it is editing.
-- **`react.md`** names the concrete `src/components/` and `src/lib/` homes in its Module Organization section, so where a module or a non-component value goes is settled there rather than here.
+- **`react.md`** is scoped to `src/**/*.ts`, `src/**/*.tsx`, `app/**/*.ts`, and `app/**/*.tsx` and settles Server and Client Component boundaries, purity, effects, component splitting, testable shape, and module organization, including the concrete `src/components/` and `src/lib/` homes its Module Organization section names.
 
 A principle lives in this file. A concrete of this repository, such as a path, a file name, or a command, lives in the rule whose scope covers the files it names. A step-by-step procedure for a named task lives in the skill that names it, and a constraint lives in the structure or the types.
 

@@ -1,7 +1,14 @@
 import { defineConfig } from "oxlint";
 import { reactDoctorRules } from "./oxlint.react-doctor.ts";
 
-const NOT_LINTED = ["node_modules", "dist", "coverage", "public", ".next"];
+const NOT_LINTED = [
+  "node_modules",
+  "dist",
+  "coverage",
+  "public",
+  ".next",
+  "next-env.d.ts",
+];
 
 export default defineConfig({
   plugins: [

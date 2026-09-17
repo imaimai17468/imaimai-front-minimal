@@ -1,6 +1,6 @@
 # imaimai-front-minimal
 
-フロントエンド開発の最小構成テンプレート。サーバーは持たず、API は Mock Service Worker が答える。
+フロントエンド開発の最小構成テンプレート。Next.js App Router をベースとし、API は Mock Service Worker が答える。
 
 追加ツールの導入や外部サービスへの接続が通しにくい環境でも、フロントエンドの開発サイクル（実装、型、Lint、テスト、ビルド、コミット前チェック）と AI コーディングエージェントの運用が成立することを条件に選定している。具体的には次の 3 つを満たす。
 
@@ -27,7 +27,7 @@
 ```bash
 pnpm install              # 依存のインストール（ignore-scripts により audit も自動実行）
 pnpm exec lefthook install  # git フックを登録（ignore-scripts のため手動で一度だけ実行）
-pnpm dev         # http://localhost:5173 で MSW 経由のモック API と一緒に起動
+pnpm dev         # http://localhost:3000 で MSW 経由のモック API と一緒に起動
 pnpm check       # フォーマット、Lint、型チェック
 pnpm test        # Vitest（カバレッジのブランチゲート込み）
 pnpm doctor      # React Doctor のプロジェクト診断（出力が無ければ検出なし）
@@ -41,17 +41,17 @@ Node は `.node-version`、pnpm は `package.json` の `packageManager` で固�
 | 分野 | 採用 | 理由 |
 | --- | --- | --- |
 | UI | React 19 | 前提 |
-| ツールチェーン | Vite+ (`vp`) | dev サーバー、ビルド、Vitest、Oxlint、Oxfmt、型チェックが 1 つのパッケージと 1 つの設定ファイルに入る。個別に 5 つ入れて整合を取る作業がなくなる |
+| ツールチェーン | Next.js | App Router、Server Components、インクリメンタルビルドが 1 パッケージに入る |
 | パッケージマネージャ | pnpm | 前提。`packageManager` で版を固定 |
-| ルーティング | TanStack Router | ファイルベースでルートが型として出る。ローダーが TanStack Query のキャッシュを直接埋められる |
+| ルーティング | Next.js App Router | ファイルベース。Server Components と Client Components の境界をルート単位で決められる |
 | サーバー状態 | TanStack Query | 前提。再取得、キャッシュ、無効化をアプリ側に書かずに済む |
 | API モック | MSW | 前提。dev とテストで同じハンドラを使うので、モックとテストのモックが二重管理にならない |
 | 入力検証 | Zod | API レスポンスの境界デコードとフォーム検証を同じスキーマ言語で書ける |
 | フォーム | React Hook Form + `@hookform/resolvers` | 再レンダリングを入力ごとに起こさない。Zod スキーマをそのまま resolver に渡せる |
-| スタイル | Tailwind CSS v4 (`@tailwindcss/vite`) | トークンを CSS 変数で持てる。`.claude/rules/design.md` がそのトークン設計を前提に書かれている |
-| テスト | Vitest + Testing Library + jsdom | `vp test` が Vitest を内蔵している。DOM を人の操作で駆動する |
-| Lint / フォーマット | Oxlint / Oxfmt（Vite+ 同梱） | ESLint と Prettier を別々に入れる構成より設定が 1 か所で済み、実行が速い |
-| 型 | TypeScript 7 + `vp check` の型認識 Lint | 型エラーと Lint が同じコマンドで出る |
+| スタイル | Tailwind CSS v4 (`@tailwindcss/postcss`) | トークンを CSS 変数で持てる。`.claude/rules/design.md` がそのトークン設計を前提に書かれている |
+| テスト | Vitest + Testing Library + jsdom | `pnpm test` が `vitest run --coverage` を呼ぶ。DOM を人の操作で駆動する |
+| Lint / フォーマット | Oxlint / Oxfmt | ESLint と Prettier を別々に入れる構成より設定が 1 か所で済み、実行が速い |
+| 型 | TypeScript 7 + `tsc --noEmit` | `pnpm check` が Oxlint と oxfmt と合わせて型エラーを出す |
 | React の静的診断 | React Doctor + `oxlint-plugin-react-doctor` | クリーンアップ漏れの effect、再レンダリング、a11y、セキュリティなど 1 ファイルで判定できる規則は Oxlint プラグインとして `pnpm check` の中で出る。循環 import、未使用の依存と export、pnpm のインストール設定のような複数ファイルにまたがる診断は `pnpm doctor` が出す |
 | コミット前チェック | lefthook | pre-commit で staged ファイルの Lint とフォーマット確認、pre-push で `pnpm check` と `pnpm test` |
 | CI | GitHub Actions | `pnpm check` / `pnpm test` / `pnpm build` の 3 ステップだけ。使えない環境では同じ 3 コマンドを手元で回せば等価 |

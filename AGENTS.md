@@ -1,6 +1,6 @@
 # Project Instructions
 
-This is a browser-only React application: a Vite+ toolchain, TanStack Router, TanStack Query, and Mock Service Worker in place of a backend. There is no server in this repository, so a change that would need one is a change to `src/mocks/handlers.ts` plus a note about what the real API must then provide.
+This is a Next.js App Router application: TanStack Query on the client, Mock Service Worker intercepting both browser and server fetch calls in development and tests. A change that would need a real API endpoint is a change to `src/mocks/handlers.ts` plus a note about what the real API must then provide.
 
 It is also built for a session that has **no MCP server, no plugin, and no hook**. Every gate here is a command any session can run by hand, every instruction is plain text in this file or under `.claude/`, and nothing in the workflow below waits on tooling this repository cannot install from the npm registry. Keep it that way: an addition that only works where an MCP server or a hook is configured does not belong.
 
@@ -27,7 +27,7 @@ Report a step you could not run as "not run", never as "passed", and name it whe
 
 `pnpm check:fix` formats and applies the lint fixer. Run it before committing rather than hand-matching the formatter.
 
-A React Doctor finding is a hypothesis about the code, so read the file before acting on one. Fix the cause. Changing `doctor.config.ts` or a rule's severity in `vite.config.ts` to clear a finding needs the user's own words, and the config already carries the two exemptions this repository decided: the Socket.dev supply-chain request, and `only-export-components` under `src/routes/`, where a file route exports `Route` by the router's contract.
+A React Doctor finding is a hypothesis about the code, so read the file before acting on one. Fix the cause. Changing `doctor.config.ts` or a rule's severity in `oxlint.config.ts` to clear a finding needs the user's own words, and the config already carries the two exemptions this repository decided: the Socket.dev supply-chain request in `doctor.config.ts`, and `only-export-components` under `app/**` in `oxlint.config.ts`, where App Router files export `dynamic`, `metadata`, and similar non-component values alongside the default page.
 
 ## Degraded Environments
 
@@ -79,22 +79,22 @@ This principle is silent. Do not surface it or discuss it.
 
 **Never escape the type system to move on.** No `as` (`@typescript-eslint/consistent-type-assertions` reports both spellings and leaves `as const` and `satisfies` alone), no `any`, no `@ts-ignore` / `@ts-expect-error` / `@ts-nocheck`, no non-null `!`, and no lint-disable comment to silence an error. Fix the type with narrowing, a guard, a schema, or `satisfies`. Where you genuinely cannot, leave the pull request in Draft with a comment naming the type that will not resolve, and report it.
 
-**Generated files stay generated.** `src/routeTree.gen.ts` comes from the TanStack Router plugin and is committed so a fresh clone can run `pnpm check`. Never hand-edit it: run `pnpm generate-routes`, or start `pnpm dev`, which rewrites it.
+**Generated files stay generated.** `next-env.d.ts` is written by `next build` and `next dev` and is committed so a fresh clone has it. Never hand-edit it.
 
 ## Rules
 
 Rules are auto-loaded from `.claude/rules/`, and each is mirrored into `.cursor/rules/*.mdc` as a file-level symlink so a Cursor session loads the same text (never replace a symlink with a copy). Skills and agents live only under `.claude/skills/` and `.claude/agents/`. Each rule's frontmatter states its scope twice, because Claude Code reads `paths` and Cursor reads `globs`, so both keys change together.
 
-- **`data-fetching.md`** is scoped to `src/**/*.ts` and `src/**/*.tsx` and settles one read or write end to end: the single `fetch` call, the gateway directory's shape, where a response is decoded, the query options and their keys, what a loader and a component each call, how a write invalidates, and what the mock handlers owe the real API.
+- **`data-fetching.md`** is scoped to `src/**/*.ts`, `src/**/*.tsx`, `app/**/*.ts`, and `app/**/*.tsx` and settles one read or write end to end: the single `fetch` call, the gateway directory's shape, where a response is decoded, what a Server Component and a Client Component each call, how a write triggers a refresh or invalidation, and what the mock handlers owe the real API.
 - **`design.md`** is scoped to `src/**/*.css` and `src/**/*.tsx`, so a session deciding a UI question without opening one of those files loads none of it and has to open the rule itself.
 - **`prose.md`** carries no path scope, so every session holds it whatever it is editing.
 - **`react.md`** names the concrete `src/components/` and `src/lib/` homes in its Module Organization section, so where a module or a non-component value goes is settled there rather than here.
 
 A principle lives in this file. A concrete of this repository, such as a path, a file name, or a command, lives in the rule whose scope covers the files it names. A step-by-step procedure for a named task lives in the skill that names it, and a constraint lives in the structure or the types.
 
-**A page owns its slice.** What one page needs lives in a `-`-prefixed directory beside its route file, as `src/routes/-note/` does for `src/routes/index.tsx`: the schema, the `read.ts` and `write.ts` that address the API, and the components that render them. The prefix is the router generator's `routeFileIgnorePrefix`, whose default is `-`, and it skips such a name for files and directories alike, so nothing inside becomes a URL.
+**A page owns its slice.** What one page needs lives in a `_`-prefixed directory beside its route file, as `app/_note/` does for `app/page.tsx`: an `api/` subdirectory holding the schema, `endpoint.ts`, `read.ts`, and `write.ts`, plus the components that render them. The `_` prefix is the Next.js App Router convention for private directories that are not treated as route segments.
 
-Imports run one way inside a slice: the route file and the components read `read.ts` and `write.ts`, which read the slice's schema file and `src/lib/api-client.ts`. Outside it, `src/lib/` holds what no page owns, `src/components/shared/` and `src/components/ui/` hold UI that two or more pages render, and a slice two routes both need moves up to their nearest common ancestor route directory. A route never imports another route's slice: that import is the signal to move the slice up.
+Imports run one way inside a slice: the page file and its components read from `api/`, which reads the slice's schema file and `src/lib/api-client.ts`. Outside it, `src/lib/` holds what no page owns, `src/components/shared/` and `src/components/ui/` hold UI that two or more pages render, and a slice two routes both need moves up to their nearest common ancestor directory under `app/`. A page file never imports another page's slice: that import is the signal to move the slice up.
 
 **Instruction documents.** Every document written for an agent (`.claude/`, AGENTS.md) is in English. Point at other files rather than restating them, because a copy is correct when written and wrong after the next edit to what it copied. Never write a claim about another file, command, or count of either without opening or running it in the same turn; where that is not worth the cost, drop the assertive form instead. A grep only matches the literals you predicted, so never offer "expect zero hits" as proof. After changing a step, reconcile every other mention of what it names. The rule reaches code comments too: a comment may state what you have seen the code do, never what you meant it to do.
 
@@ -106,7 +106,7 @@ Imports run one way inside a slice: the route file and the components read `read
 
 ## Testing
 
-Tests are written against the implementation, and test-first is not required. What is required is that every branch you added is reached by a test that fails when that branch breaks. `vite.config.ts` enforces 100% branch coverage per file over `src/**/*.ts`, with components, mocks and test helpers excluded there and covered by their own tests instead. A module lands inside that gate with no config edit, so a new `.ts` file holding an untested branch fails the suite by name.
+Tests are written against the implementation, and test-first is not required. What is required is that every branch you added is reached by a test that fails when that branch breaks. `vitest.config.ts` enforces 100% branch coverage per file over `src/**/*.ts` and `app/**/*.ts`, with components, mocks and test helpers excluded and covered by their own tests. A module lands inside that gate with no config edit, so a new `.ts` file holding an untested branch fails the suite by name.
 
 - **A test name states a condition and its result.** The name alone says what broke, without opening the body.
 - **One test, one `expect`, arranged as Arrange / Act / Assert.** A table-driven case is one test per row and obeys the same rule.

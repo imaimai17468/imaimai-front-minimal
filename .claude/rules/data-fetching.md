@@ -7,7 +7,7 @@ paths: src/**/*.ts, src/**/*.tsx, app/**/*.ts, app/**/*.tsx
 
 # Data Fetching
 
-AGENTS.md settles which directory owns a module: a page's slice sits in a `-`-prefixed directory beside its route file. This file settles what one read or one write looks like inside that slice.
+AGENTS.md settles which directory owns a module: a page's slice sits in a `_`-prefixed directory beside its route file, with fetch logic in an `api/` subdirectory. This file settles what one read or one write looks like inside that slice.
 
 ## Where a request leaves the app
 
@@ -17,12 +17,12 @@ AGENTS.md settles which directory owns a module: a page's slice sits in a `-`-pr
 
 ## Slice shape
 
-`src/routes/-note/` is the shape, and a slice holds one resource:
+`app/_note/` is the shape, with `api/` holding the fetch logic and the slice root holding the components. A slice holds one resource:
 
-- **The gateway is split by operation, not by layer.** `read.ts` holds the fetch function; a `queryOptions` factory sits there too when a Client Component reads the same resource. `write.ts` holds the function a mutation calls. A module both sides route through reads as depth without adding a decision, which is what `react.md`'s *No pass-through layers* refuses.
-- **A file holds what both operations use**, as `endpoint.ts` holds the path they share. A second resource brings its own slice.
+- **The gateway is split by operation, not by layer.** `api/read.ts` holds the fetch function; a `queryOptions` factory sits there too when a Client Component reads the same resource. `api/write.ts` holds the function a mutation calls. A module both sides route through reads as depth without adding a decision, which is what `react.md`'s *No pass-through layers* refuses.
+- **A file holds what both operations use**, as `api/endpoint.ts` holds the path they share. A second resource brings its own slice.
 - **A sub-directory carries an operation whose steps outgrow its file**, such as an upload that asks for a URL, puts the file, then writes the row.
-- **The components that render the resource live in the same directory.** Where two pages render one of them, AGENTS.md decides which directory it moves to.
+- **The components that render the resource live in the slice root directory.** Where two pages render one of them, AGENTS.md decides which directory it moves to.
 
 ## Decoding
 

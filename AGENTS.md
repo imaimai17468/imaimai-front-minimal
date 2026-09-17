@@ -18,13 +18,16 @@ Ticket-granularity work follows the `ticket-work` skill: implementing a componen
 
 No hook runs these. Run them yourself, in this order, before reporting a change complete:
 
-- `pnpm check` — formatting, lint, and types, over the whole repository
+- `pnpm check` — formatting, lint, and types, over the whole repository. React Doctor's per-file rules run here as an Oxlint plugin, so an effect that leaks a listener fails this step
 - `pnpm test` — the suite with coverage, including the per-file branch gate
+- `pnpm doctor` — React Doctor's own scan, which adds what a single file cannot show: circular imports, unused dependencies and exports, maintainability, and the pnpm install hardening settings. Run it where the change adds a dependency, a module, or a component
 - `pnpm build` — where the change could reach the bundle, because a module that type-checks can still fail to build
 
 Report a step you could not run as "not run", never as "passed", and name it when reporting completion. A failing step is the result; describe it with its output rather than narrowing the claim.
 
 `pnpm check:fix` formats and applies the lint fixer. Run it before committing rather than hand-matching the formatter.
+
+A React Doctor finding is a hypothesis about the code, so read the file before acting on one. Fix the cause. Changing `doctor.config.ts` or a rule's severity in `vite.config.ts` to clear a finding needs the user's own words, and the config already carries the two exemptions this repository decided: the Socket.dev supply-chain request, and `only-export-components` under `src/routes/`, where a file route exports `Route` by the router's contract.
 
 ## Degraded Environments
 

@@ -17,12 +17,19 @@
     "moduleDetection": "force",
     "resolveJsonModule": true,
     "isolatedModules": true,
+    "allowImportingTsExtensions": true,
     "types": ["node"],
     "jsx": "react-jsx",
     "paths": {
       "@/*": ["./src/*"]
     }
   },
-  "include": ["src/**/*.ts", "src/**/*.tsx", "vite.config.ts"],
+  "include": [
+    "src/**/*.ts",
+    "src/**/*.tsx",
+    "vite.config.ts",
+    "oxlint.react-doctor.ts",
+    "doctor.config.ts"
+  ],
   "exclude": ["node_modules", "dist"]
 }

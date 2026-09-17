@@ -3,6 +3,8 @@ import { render } from "@testing-library/react";
 import type { ReactElement } from "react";
 import { Suspense } from "react";
 
+const loadingFallback = <p>読み込み中</p>;
+
 /**
  * Renders a component that reads through TanStack Query. Each call builds its
  * own client, so one test's cache never serves another's assertion, and the
@@ -15,7 +17,7 @@ export const renderWithQuery = (ui: ReactElement): void => {
 
   render(
     <QueryClientProvider client={queryClient}>
-      <Suspense fallback={<p>読み込み中</p>}>{ui}</Suspense>
+      <Suspense fallback={loadingFallback}>{ui}</Suspense>
     </QueryClientProvider>,
   );
 };

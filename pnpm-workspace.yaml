@@ -10,3 +10,12 @@
 overrides:
   vite: npm:@voidzero-dev/vite-plus-core@0.3.2
   vitest: 4.1.11
+
+# `minimumReleaseAge` delays installing a version published less than 7 days
+# ago, which is the window a compromised release is usually caught and
+# unpublished in. It reads from pnpm 10.16 on. `trustPolicy` refuses an update
+# whose trust evidence is weaker than the installed version's, and it reads
+# from pnpm 10.21 on, so `packageManager` above has to name at least that
+# version for it to do anything.
+minimumReleaseAge: 10080
+trustPolicy: no-downgrade

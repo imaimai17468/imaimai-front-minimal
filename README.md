@@ -15,6 +15,7 @@ pnpm install     # 依存と lefthook のインストール
 pnpm dev         # http://localhost:5173 で MSW 経由のモック API と一緒に起動
 pnpm check       # フォーマット、Lint、型チェック
 pnpm test        # Vitest（カバレッジのブランチゲート込み）
+pnpm doctor      # React Doctor のプロジェクト診断（出力が無ければ検出なし）
 pnpm build       # 本番ビルド
 ```
 
@@ -36,6 +37,7 @@ Node は `.node-version`、pnpm は `package.json` の `packageManager` で固�
 | テスト | Vitest + Testing Library + jsdom | `vp test` が Vitest を内蔵している。DOM を人の操作で駆動する |
 | Lint / フォーマット | Oxlint / Oxfmt（Vite+ 同梱） | ESLint と Prettier を別々に入れる構成より設定が 1 か所で済み、実行が速い |
 | 型 | TypeScript 7 + `vp check` の型認識 Lint | 型エラーと Lint が同じコマンドで出る |
+| React の静的診断 | React Doctor + `oxlint-plugin-react-doctor` | クリーンアップ漏れの effect、再レンダリング、a11y、セキュリティなど 1 ファイルで判定できる規則は Oxlint プラグインとして `pnpm check` の中で出る。循環 import、未使用の依存と export、pnpm のインストール設定のような複数ファイルにまたがる診断は `pnpm doctor` が出す |
 | コミット前チェック | lefthook | pre-commit で staged ファイルの Lint とフォーマット確認、pre-push で `pnpm check` と `pnpm test` |
 | CI | GitHub Actions | `pnpm check` / `pnpm test` / `pnpm build` の 3 ステップだけ。使えない環境では同じ 3 コマンドを手元で回せば等価 |
 

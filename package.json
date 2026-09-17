@@ -18,7 +18,8 @@
     "test": "vp test --run --coverage",
     "test:watch": "vp test",
     "generate-routes": "tsr generate",
-    "msw:init": "msw init public --no-save"
+    "msw:init": "msw init public --no-save",
+    "doctor": "react-doctor --no-telemetry -y"
   },
   "dependencies": {
     "@hookform/resolvers": "5.9.1",
@@ -50,6 +51,8 @@
     "jsdom": "30.1.0",
     "lefthook": "2.1.14",
     "msw": "2.15.0",
+    "oxlint-plugin-react-doctor": "0.9.14",
+    "react-doctor": "0.9.14",
     "tailwindcss": "4.3.3",
     "typescript": "7.0.2",
     "vite": "npm:@voidzero-dev/vite-plus-core@0.3.2",

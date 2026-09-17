@@ -1,5 +1,6 @@
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { type SubmitEvent, useCallback } from "react";
 import { useForm } from "react-hook-form";
 import { type NoteDraft, noteDraftSchema } from "@/entities/note";
 import { notesQueryOptions } from "@/gateways/note/read";
@@ -25,16 +26,19 @@ export const NoteForm = () => {
     },
   });
 
+  // `handleSubmit` and `mutate` keep their identity across renders, so this
+  // handler does too, and the form element receives the same prop each time.
+  const submit = useCallback(
+    (event: SubmitEvent<HTMLFormElement>) => {
+      void handleSubmit((draft) => {
+        mutate(draft);
+      })(event);
+    },
+    [handleSubmit, mutate],
+  );
+
   return (
-    <form
-      onSubmit={(event) => {
-        void handleSubmit((draft) => {
-          mutate(draft);
-        })(event);
-      }}
-      className="flex flex-col gap-3"
-      noValidate
-    >
+    <form onSubmit={submit} className="flex flex-col gap-3" noValidate>
       <label className="flex flex-col gap-1">
         <span className="text-sm font-medium">タイトル</span>
         <input

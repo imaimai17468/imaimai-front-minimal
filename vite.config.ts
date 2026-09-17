@@ -2,6 +2,7 @@ import tailwindcss from "@tailwindcss/vite";
 import { tanstackRouter } from "@tanstack/router-plugin/vite";
 import react from "@vitejs/plugin-react";
 import { defineConfig } from "vite-plus";
+import { reactDoctorRules } from "./oxlint.react-doctor.ts";
 
 const GENERATED = ["src/routeTree.gen.ts"];
 const NOT_LINTED = ["node_modules", "dist", "coverage", "public", ...GENERATED];
@@ -48,7 +49,10 @@ export default defineConfig({
       "import",
       "jsx-a11y",
     ],
-    jsPlugins: [{ name: "query", specifier: "@tanstack/eslint-plugin-query" }],
+    jsPlugins: [
+      { name: "query", specifier: "@tanstack/eslint-plugin-query" },
+      { name: "react-doctor", specifier: "oxlint-plugin-react-doctor" },
+    ],
     categories: {
       correctness: "error",
       suspicious: "error",
@@ -56,6 +60,7 @@ export default defineConfig({
       pedantic: "error",
     },
     rules: {
+      ...reactDoctorRules,
       eqeqeq: ["error", "always", { null: "ignore" }],
       "no-console": "warn",
       "no-param-reassign": "error",
@@ -106,6 +111,13 @@ export default defineConfig({
         // refuses.
         files: ["src/**/*.tsx"],
         rules: { "max-lines-per-function": "off" },
+      },
+      {
+        // A file route exports `Route`, which is what the TanStack Router
+        // plugin reads to build the route tree, so the rule's remedy would
+        // break the build.
+        files: ["src/routes/**"],
+        rules: { "react-doctor/only-export-components": "off" },
       },
     ],
     ignorePatterns: NOT_LINTED,

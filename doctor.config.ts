@@ -2,7 +2,7 @@ import { defineConfig } from "react-doctor/api";
 
 export default defineConfig({
   ignore: {
-    files: ["dist/**", "coverage/**", "public/**", "src/routeTree.gen.ts"],
+    files: ["dist/**", "coverage/**", "public/**", ".next/**"],
   },
   // The Socket.dev score check makes one network request per direct
   // dependency. `pnpm audit` and the lockfile are what this repository checks

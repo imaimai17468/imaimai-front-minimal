@@ -70,6 +70,7 @@ Node は `.node-version`、pnpm は `package.json` の `packageManager` で固�
 | `.claude/agents/code-reviewer.md` | コミット前レビュー。未コミットの diff を読み、検出 → 重複排除 → 反証 → 報告の 4 段で回す |
 | `.claude/skills/ticket-work/` | チケット単位の作業手順 7 ステップ |
 | `.claude/skills/empirical-prompt-tuning/` | プロンプトやスキルを実測で改善する手順 |
+| `.claude/skills/security-audit/` | セキュリティ監査スキル。ガイダンスモード（質問・調査）とフル監査モード（6 フェーズ・レポート生成）を持つ。明示的な監査依頼でのみフルモードが走る |
 | `.claude/settings.json` | 読み取り系と `pnpm` script の許可リストのみ。フックは設定していない |
 
 ## ライセンス

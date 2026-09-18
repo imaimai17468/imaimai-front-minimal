@@ -11,6 +11,7 @@ export default defineConfig({
     },
   },
   test: {
+    exclude: ["node_modules", ".claude/**"],
     environment: "jsdom",
     setupFiles: ["./src/test-setup.ts"],
     restoreMocks: true,

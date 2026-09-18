@@ -8,6 +8,7 @@ const NOT_LINTED = [
   "public",
   ".next",
   "next-env.d.ts",
+  ".claude",
 ];
 
 export default defineConfig({
